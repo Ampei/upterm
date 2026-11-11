@@ -5,15 +5,8 @@ import * as pty from "node-pty";
 import {loginShell} from "./utils/Shell";
 import {homeDirectory, info} from "./utils/Common";
 
-interface ITerminal {
-    write(data: string): void;
-    resize(cols: number, rows: number): void;
-    kill(signal?: string): void;
-    on(type: string, listener: (...args: any[]) => any): void;
-}
-
 export class PTY {
-    private terminal: ITerminal;
+    private terminal: pty.IPty;
 
     // TODO: write proper signatures.
     // TODO: use generators.
@@ -24,15 +17,15 @@ export class PTY {
         info(`PTY: ${loginShell.executableName} ${JSON.stringify(shellArguments)}`);
         info(`Dimensions: ${JSON.stringify(dimensions)}}`);
 
-        this.terminal = <any> pty.fork(loginShell.executableName, shellArguments, {
+        this.terminal = pty.spawn(loginShell.executableName, shellArguments, {
             cols: dimensions.columns,
             rows: dimensions.rows,
             cwd: env.PWD,
             env: env,
         });
 
-        this.terminal.on("data", (data: string) => dataHandler(data));
-        this.terminal.on("exit", (code: number) => exitHandler(code));
+        this.terminal.onData(data => dataHandler(data));
+        this.terminal.onExit(({exitCode}) => exitHandler(exitCode));
     }
 
     write(data: string): void {

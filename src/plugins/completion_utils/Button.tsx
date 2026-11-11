@@ -1,7 +1,7 @@
 import * as React from "react";
 import {colors} from "../../views/css/colors";
 
-const buttonStyles = (color: string) => ({
+const buttonStyles = (color: string): React.CSSProperties => ({
   borderColor: color,
   borderStyle: "solid",
   borderRadius: "4px",

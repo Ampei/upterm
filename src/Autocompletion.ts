@@ -19,7 +19,7 @@ export async function getSuggestions({
     environment,
     historicalPresentDirectoriesStack,
     aliases,
-}: GetSuggestionsOptions): Promise<monaco.languages.CompletionList> {
+}: GetSuggestionsOptions) {
     const node = leafNodeAt(currentCaretPosition, ast);
     const suggestions = await node.suggestions({
         environment: environment,
@@ -27,13 +27,8 @@ export async function getSuggestions({
         aliases: aliases,
     });
 
-    const uniqueSuggestions = _.uniqBy(suggestions, suggestion => suggestion.label);
-
-    return {
-        isIncomplete: false,
-        items: uniqueSuggestions.map(suggestion => ({
-            ...suggestion,
-            kind: monaco.languages.CompletionItemKind.Interface,
-        })),
-    };
+    return _.uniqBy(suggestions, suggestion => suggestion.label).map(suggestion => ({
+        ...suggestion,
+        kind: monaco.languages.CompletionItemKind.Interface,
+    }));
 }

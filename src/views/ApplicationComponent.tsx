@@ -2,8 +2,8 @@ import {type as osType} from "os";
 import * as classNames from "classnames";
 import {TabHeaderComponent, Props} from "./TabHeaderComponent";
 import * as React from "react";
+import {execFile} from "child_process";
 import {ipcRenderer} from "electron";
-import {remote} from "electron";
 import * as css from "./css/styles";
 import {SearchComponent} from "./SearchComponent";
 import {TabComponent} from "./TabComponent";
@@ -40,7 +40,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             this.resizeAllSessions();
         });
 
-        ipcRenderer.on("change-working-directory", (_event: Event, directory: string) =>
+        ipcRenderer.on("change-working-directory", (_event: Electron.IpcRendererEvent, directory: string) =>
             this.focusedSession.directory = directory,
         );
     }
@@ -116,7 +116,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
 
             this.setState(state);
         } else {
-            remote.shell.beep();
+            beep();
         }
     }
 
@@ -140,7 +140,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         if (this.state.tabs.length > index) {
             this.setState({focusedTabIndex: index});
         } else {
-            remote.shell.beep();
+            beep();
         }
     }
 
@@ -222,5 +222,16 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
      */
     private cloneState(): ApplicationState {
         return _.cloneDeep(this.state);
+    }
+}
+
+function beep(): void {
+    if (osType() === "Darwin") {
+        execFile("osascript", ["-e", "beep"]);
+        return;
+    }
+
+    if (osType() === "Linux") {
+        execFile("paplay", ["/usr/share/sounds/freedesktop/stereo/bell.oga"]);
     }
 }

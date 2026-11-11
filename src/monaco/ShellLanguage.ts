@@ -170,7 +170,7 @@ monaco.editor.onDidCreateModel(model => {
 
                 if (!executables.includes(commandName) && !session.aliases.has(commandName)) {
                     markers.push({
-                        severity: monaco.Severity.Error,
+                        severity: monaco.MarkerSeverity.Error,
                         message: `Executable ${commandName} doesn't exist in $PATH.`,
                         ...tokenRange,
                     });
@@ -192,7 +192,7 @@ monaco.languages.registerCompletionItemProvider("shell", {
 
         const ast = new CompleteCommand(scan(text));
 
-        return getSuggestions({
+        const suggestions = await getSuggestions({
             currentText: text,
             currentCaretPosition: position.column - 1,
             ast: ast,
@@ -200,6 +200,30 @@ monaco.languages.registerCompletionItemProvider("shell", {
             historicalPresentDirectoriesStack: session.historicalPresentDirectoriesStack,
             aliases: session.aliases,
         });
+        const word = model.getWordUntilPosition(position);
+        const range = new monaco.Range(
+            position.lineNumber,
+            word.startColumn,
+            position.lineNumber,
+            position.column,
+        );
+
+        return {
+            incomplete: false,
+            suggestions: suggestions.map(suggestion => ({
+                label: suggestion.label,
+                kind: suggestion.kind || monaco.languages.CompletionItemKind.Text,
+                detail: suggestion.detail,
+                documentation: suggestion.documentation,
+                sortText: suggestion.sortText,
+                filterText: suggestion.filterText,
+                insertText: typeof suggestion.insertText === "string" ? suggestion.insertText : suggestion.label,
+                insertTextRules: typeof suggestion.insertText === "string" && suggestion.insertText.includes("${")
+                    ? monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
+                    : undefined,
+                range: suggestion.range || range,
+            })),
+        };
     },
 });
 

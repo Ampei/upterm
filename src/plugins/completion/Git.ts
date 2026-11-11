@@ -127,13 +127,13 @@ const commitOptions: Suggestion[] = [
         label: "--message",
         detail: descriptions.git.commit.message,
         kind: monaco.languages.CompletionItemKind.Snippet,
-        insertText: {value: "--message \"${0:Commit message}\""},
+        insertText: "--message \"${0:Commit message}\"",
     },
     {
         label: "-m",
         detail: descriptions.git.commit.message,
         kind: monaco.languages.CompletionItemKind.Snippet,
-        insertText: {value: "-m \"${0:Commit message}\""},
+        insertText: "-m \"${0:Commit message}\"",
     },
     {
         label: "--all",

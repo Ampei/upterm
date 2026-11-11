@@ -1,4 +1,4 @@
-import {remote} from "electron";
+import * as remote from "@electron/remote";
 import {Observable} from "rxjs/Observable";
 import "rxjs/add/observable/fromEvent";
 import "rxjs/add/operator/map";
@@ -7,7 +7,7 @@ import {NeverObservable} from "rxjs/observable/NeverObservable";
 import {Subject} from "rxjs/Subject";
 
 export class WindowService {
-    readonly onResize: Observable<{}>;
+    readonly onResize: Observable<any>;
     readonly onClose = new Subject<{}>();
     readonly onBoundsChange: Observable<Electron.Rectangle>;
 

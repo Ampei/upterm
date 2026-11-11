@@ -21,13 +21,19 @@ export function requireMonaco(callback: () => void) {
         }
 
         amdRequire.config({
-            baseUrl: uriFromPath(path.join(__dirname, "../../../node_modules/monaco-editor/dev")),
+            baseUrl: uriFromPath(path.join(__dirname, "../../../node_modules/monaco-editor/min")),
         });
-        // workaround monaco-css not understanding the environment
+        // Monaco's CSS/TS workers misread Node's module and process.
+        // Put them back before app code loads, or UMD packages such as lodash
+        // register with the AMD loader and export an empty module.
+        const nodeModule = (self as any).module;
         (self as any).module = undefined;
-        // workaround monaco-typescript not understanding the environment
         (self as any).process.browser = true;
-        amdRequire(["vs/editor/editor.main"], callback);
+        amdRequire(["vs/editor/editor.main"], () => {
+            (self as any).module = nodeModule;
+            g.define = undefined;
+            callback();
+        });
 
         // window.require(["vs/editor/editor.main"], () => require("./Main"));
     });

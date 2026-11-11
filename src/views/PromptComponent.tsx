@@ -55,9 +55,9 @@ export class PromptComponent extends React.Component<Props, State> {
             overviewRulerLanes: 0,
             quickSuggestions: true,
             quickSuggestionsDelay: 0,
-            parameterHints: true,
-            iconsInSuggestions: false,
-            wordBasedSuggestions: false,
+            parameterHints: {enabled: true},
+            suggest: {showIcons: false},
+            wordBasedSuggestions: "off",
         });
 
         services.font.onChange.subscribe(() => {
@@ -75,7 +75,7 @@ export class PromptComponent extends React.Component<Props, State> {
             "!suggestWidgetVisible",
         );
         this.editor.addCommand(
-            monaco.KeyMod.WinCtrl | monaco.KeyCode.KEY_P,
+            monaco.KeyMod.WinCtrl | monaco.KeyCode.KeyP,
             () => this.setPreviousHistoryItem(),
             "!suggestWidgetVisible",
         );
@@ -85,43 +85,43 @@ export class PromptComponent extends React.Component<Props, State> {
             "!suggestWidgetVisible",
         );
         this.editor.addCommand(
-            monaco.KeyMod.WinCtrl | monaco.KeyCode.KEY_N,
+            monaco.KeyMod.WinCtrl | monaco.KeyCode.KeyN,
             () => this.setNextHistoryItem(),
             "!suggestWidgetVisible",
         );
         this.addShortcut(
-            monaco.KeyMod.WinCtrl | monaco.KeyCode.KEY_B,
+            monaco.KeyMod.WinCtrl | monaco.KeyCode.KeyB,
             "cursorLeft",
         );
         this.addShortcut(
-            monaco.KeyMod.Alt | monaco.KeyCode.KEY_B,
+            monaco.KeyMod.Alt | monaco.KeyCode.KeyB,
             "cursorWordStartLeft",
         );
         this.addShortcut(
-            monaco.KeyMod.WinCtrl | monaco.KeyCode.KEY_F,
+            monaco.KeyMod.WinCtrl | monaco.KeyCode.KeyF,
             "cursorRight",
         );
         this.addShortcut(
-            monaco.KeyMod.Alt | monaco.KeyCode.KEY_F,
+            monaco.KeyMod.Alt | monaco.KeyCode.KeyF,
             "cursorWordEndRight",
         );
         this.addShortcut(
-            monaco.KeyMod.WinCtrl | monaco.KeyCode.KEY_W,
+            monaco.KeyMod.WinCtrl | monaco.KeyCode.KeyW,
             "deleteWordLeft",
         );
         this.addShortcut(
-            monaco.KeyMod.Alt | monaco.KeyCode.KEY_D,
+            monaco.KeyMod.Alt | monaco.KeyCode.KeyD,
             "deleteWordRight",
         );
         this.addShortcut(
-            monaco.KeyMod.WinCtrl | monaco.KeyCode.KEY_D,
+            monaco.KeyMod.WinCtrl | monaco.KeyCode.KeyD,
             "deleteRight",
         );
 
-        this.unbindDefaultAction("editor.action.outdentLines");
-        this.unbindDefaultAction("editor.action.indentLines");
-        this.unbindDefaultAction("actions.find");
-        this.unbindDefaultAction("editor.action.gotoLine");
+        this.unbindDefaultAction("editor.action.outdentLines", monaco.KeyMod.Shift | monaco.KeyCode.Tab);
+        this.unbindDefaultAction("editor.action.indentLines", monaco.KeyCode.Tab);
+        this.unbindDefaultAction("actions.find", monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyF);
+        this.unbindDefaultAction("editor.action.gotoLine", monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyG);
 
         this.focus();
     }
@@ -279,11 +279,13 @@ export class PromptComponent extends React.Component<Props, State> {
         this.editor.addCommand(
             keybinding,
             () => this.editor.trigger("", handlerId, {}),
-            "",
         );
     }
 
-    private unbindDefaultAction(handlerId: string) {
-        (this.editor as any)._standaloneKeybindingService.addDynamicKeybinding(`-${handlerId}`);
+    private unbindDefaultAction(handlerId: string, keybinding: number) {
+        monaco.editor.addKeybindingRules([{
+            keybinding,
+            command: `-${handlerId}`,
+        }]);
     }
 }

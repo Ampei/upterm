@@ -60,9 +60,9 @@ export class OutputComponent extends React.Component<Props, {}> {
         const cursorComponent = showCursor
             ? <span className="cursor"
                     style={{
-                        "--scrollback-size": buffer.scrollbackSize,
-                        "--row-index": buffer.cursorRowIndex,
-                        "--column-index": buffer.cursorColumnIndex,
+                        "--scrollback-size": String(buffer.scrollbackSize),
+                        "--row-index": String(buffer.cursorRowIndex),
+                        "--column-index": String(buffer.cursorColumnIndex),
                     }}/>
             : undefined;
 

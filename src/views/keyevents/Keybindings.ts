@@ -231,7 +231,7 @@ export function handleUserEvent(application: ApplicationComponent, search: Searc
         }
 
         if (isJobRunning) {
-            application.focusedSession.lastJob!.write(event.clipboardData.getData("text/plain"));
+            application.focusedSession.lastJob!.write(event.clipboardData?.getData("text/plain") || "");
 
             event.stopPropagation();
             event.preventDefault();

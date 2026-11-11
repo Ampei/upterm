@@ -1,14 +1,19 @@
 import {app, ipcMain, nativeImage, BrowserWindow, screen} from "electron";
+import {enable, initialize} from "@electron/remote/main";
 import {readFileSync} from "fs";
+import * as path from "path";
 import {windowBoundsFilePath} from "../utils/Common";
+
+initialize();
 
 app.on("ready", () => {
     const bounds = windowBounds();
 
     let options: Electron.BrowserWindowConstructorOptions = {
         webPreferences: {
-            experimentalFeatures: true,
-            experimentalCanvasFeatures: true,
+            nodeIntegration: true,
+            contextIsolation: false,
+            sandbox: false,
         },
         titleBarStyle: "hidden",
         resizable: true,
@@ -21,6 +26,7 @@ app.on("ready", () => {
         show: false,
     };
     const browserWindow = new BrowserWindow(options);
+    enable(browserWindow.webContents);
 
     if (app.dock) {
         app.dock.setIcon(nativeImage.createFromPath("build/icon.png"));
@@ -28,7 +34,7 @@ app.on("ready", () => {
         browserWindow.setIcon(nativeImage.createFromPath("build/icon.png"));
     }
 
-    browserWindow.loadURL("file://" + __dirname + "/../views/index.html");
+    browserWindow.loadFile(path.join(__dirname, "../views/index.html"));
 
     browserWindow.webContents.on("did-finish-load", () => {
         browserWindow.show();

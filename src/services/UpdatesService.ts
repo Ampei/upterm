@@ -1,4 +1,4 @@
-import {remote} from "electron";
+import * as remote from "@electron/remote";
 import * as https from "https";
 
 export class UpdatesService {

@@ -21,7 +21,7 @@ const labelStyle = {
     color: colors.magenta,
 };
 
-const childrenCount = {
+const childrenCount: React.CSSProperties = {
     WebkitUserSelect: "none",
     userSelect: "none",
     cursor: "default",

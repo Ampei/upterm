@@ -16,7 +16,7 @@ abstract class CommandExecutionStrategy {
     constructor(protected job: Job) {
     }
 
-    abstract startExecution(): Promise<{}>;
+    abstract startExecution(): Promise<void>;
 }
 
 class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
@@ -25,7 +25,7 @@ class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
     }
 
     startExecution() {
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             try {
                 Command.executor(this.job.prompt.commandName)(this.job, this.job.prompt.arguments.map(token => token.value));
                 resolve();
@@ -57,7 +57,7 @@ class ShellExecutionStrategy extends CommandExecutionStrategy {
     }
 
     startExecution() {
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             this.job.setPty(new PTY(
                 this.job.prompt.expandedTokens.map(token => token.escapedValue),
                 this.job.environment.toObject(),
@@ -75,7 +75,7 @@ class WindowsShellExecutionStrategy extends CommandExecutionStrategy {
     }
 
     startExecution() {
-        return new Promise((resolve) => {
+        return new Promise<void>((resolve) => {
             this.job.setPty(new PTY(
                 [
                     this.cmdPath,
@@ -108,7 +108,7 @@ export class CommandExecutor {
         ShellExecutionStrategy,
     ];
 
-    static async execute(job: Job): Promise<{}> {
+    static async execute(job: Job): Promise<void> {
         const applicableExecutors = await filterAsync(this.executors, executor => executor.canExecute(job));
 
         if (applicableExecutors.length) {

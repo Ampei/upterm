@@ -20,12 +20,22 @@ monaco.languages.register({
 
 monaco.languages.registerCompletionItemProvider("shell-history", {
     triggerCharacters: [" ", "/"],
-    provideCompletionItems: () => {
+    provideCompletionItems: (model, position) => {
+        const word = model.getWordUntilPosition(position);
+        const range = new monaco.Range(
+            position.lineNumber,
+            word.startColumn,
+            position.lineNumber,
+            position.column,
+        );
+
         return {
-            isIncomplete: false,
-            items: _.uniqBy(services.history.all, record => record.command).map(record => ({
+            incomplete: false,
+            suggestions: _.uniqBy(services.history.all, record => record.command).map(record => ({
                 label: record.command,
                 kind: monaco.languages.CompletionItemKind.Text,
+                insertText: record.command,
+                range,
             })),
         };
     },

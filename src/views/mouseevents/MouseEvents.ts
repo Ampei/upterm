@@ -18,7 +18,11 @@ export function handleMouseEvent(application: ApplicationComponent, event: Mouse
     const promptComponent = sessionComponent.promptComponent;
 
     if (event instanceof DragEvent) {
-        const path = event.dataTransfer.files[0].path;
+        const file = event.dataTransfer?.files[0] as (File & {path: string}) | undefined;
+        if (!file) {
+            return;
+        }
+        const path = file.path;
         let formattedPath = userFriendlyPath(escapeFilePath(path));
 
         if (isDirectory(path)) {

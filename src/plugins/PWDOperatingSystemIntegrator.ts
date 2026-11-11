@@ -1,6 +1,6 @@
 import {Session} from "../shell/Session";
 import {PluginManager} from "../PluginManager";
-import {remote} from "electron";
+import * as remote from "@electron/remote";
 
 PluginManager.registerEnvironmentObserver({
     presentWorkingDirectoryWillChange: () => { /* do nothing */ },

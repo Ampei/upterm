@@ -14,7 +14,7 @@ import {ApplicationComponent} from "./ApplicationComponent";
 import {loadAllPlugins} from "../PluginManager";
 import {loadEnvironment} from "../shell/Environment";
 import {UserEvent, MouseEvent} from "../Interfaces";
-import {remote} from "electron";
+import * as remote from "@electron/remote";
 import {buildMenuTemplate} from "./menu/Menu";
 
 const browserWindow = remote.BrowserWindow.getAllWindows()[0];

@@ -44,7 +44,7 @@ export interface Suggestion {
      * this completion. When `falsy` the [label](#CompletionItem.label)
      * is used.
      */
-    insertText?: string | monaco.languages.SnippetString;
+    insertText?: string;
     /**
      * A range of text that should be replaced by this completion item.
      *
