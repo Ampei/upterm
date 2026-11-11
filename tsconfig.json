@@ -13,6 +13,7 @@
     "strictNullChecks": true,
     "noImplicitThis": true,
     "inlineSourceMap": true,
+    "skipLibCheck": true,
     "lib": ["es2015", "es2017", "dom"]
   },
   "exclude": [
